@@ -1,0 +1,18 @@
+hash: 338506e0f784fe28541904d445fb300846c8287a933a3eb15862d3d2364980eb
+updated: 2017-11-22T07:57:30.307857605+05:30
+imports:
+- name: github.com/BurntSushi/toml
+  version: b26d9c308763d68093482582cea63d69be07a0f0
+- name: github.com/bwmarrin/discordgo
+  version: 9ce745633f5df2849c8f03d7e8cd0b1fb6d35001
+- name: github.com/gorilla/websocket
+  version: aa5ed01c91270a67ce417d1810afc31ec14779a9
+- name: github.com/thoj/go-ircevent
+  version: db5bd176f7c6f4b2f15c46142fdc8319a365bf6e
+- name: golang.org/x/crypto
+  version: 9419663f5a44be8b34ca85f08abc5fe1be11f8a3
+  subpackages:
+  - nacl/secretbox
+  - poly1305
+  - salsa20/salsa
+testImports: []
