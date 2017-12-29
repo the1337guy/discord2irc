@@ -2,13 +2,31 @@ package main
 
 import (
 	"fmt"
-	"unicode/utf8"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 // nolint
 var DG *discordgo.Session
+
+// IRCmaxLen represents the maximum length of a IRC message
+const IRCmaxLen = 480
+
+// IRCsplit splits a message over 480 bytes to chunks of 480-byte messages.
+func IRCsplit(s string) [][]byte {
+	var r [][]byte
+	b := []byte(s)
+	for len(b) > 0 {
+		l := len(b)
+		if l > IRCmaxLen {
+			l = IRCmaxLen
+		}
+		r = append(r, b[:l:l])
+		b = b[l:]
+	}
+	return r
+}
 
 func createDiscordSession() {
 	var err error
@@ -34,19 +52,23 @@ func discordOnMessage(dg *discordgo.Session, m *discordgo.MessageCreate) {
 	msg = fmt.Sprintf(DiscordFormatting, m.Author.String(), msg)
 
 	var chunks []string
-	for len(msg) > 512 {
-		i := 512
-		for i >= 512-utf8.UTFMax && !utf8.RuneStart(msg[i]) {
-			i--
-		}
-		chunks = append(chunks, msg[:i])
-		msg = msg[i:]
-	}
-	if len(msg) > 0 {
-		chunks = append(chunks, msg) // nolint
+	// revive autism
+	if strings.Contains(msg, "\r\n") {
+		chunks = strings.Split(msg, "\r\n")
+	} else {
+		chunks = []string{msg}
 	}
 
+	// not managing the character limit per messages, so we do that now
+	chunkcp := []string{}
+
 	for _, chunk := range chunks {
+		for _, chk1 := range IRCsplit(chunk) {
+			chunkcp = append(chunkcp, string(chk1))
+		}
+	}
+
+	for _, chunk := range chunkcp {
 		ircObj.Privmsg(im, chunk)
 	}
 }
