@@ -11,7 +11,7 @@ import (
 var DG *discordgo.Session
 
 // IRCmaxLen represents the maximum length of a IRC message
-const IRCmaxLen = 480
+const IRCmaxLen = 256
 
 // IRCsplit splits a message over 480 bytes to chunks of 480-byte messages.
 func IRCsplit(s string) [][]byte {
